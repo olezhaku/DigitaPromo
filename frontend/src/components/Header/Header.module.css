@@ -1,0 +1,32 @@
+@font-face {
+	font-family: Neuwelt-Black;
+	src: url(../../fonts/Neuwelt-Black.ttf);
+}
+
+.header {
+	border-radius: 1.5em !important;
+	padding: 0 0.75em 0 1.5em;
+	height: fit-content;
+}
+
+.container {
+	justify-content: end;
+	gap: 0.75em;
+}
+
+.wallet > p {
+	font-family: Neuwelt-Black !important;
+	margin-bottom: 2px;
+}
+
+.wallet,
+.notification {
+	display: flex;
+	align-items: center;
+	gap: 0.3em;
+}
+
+.notification {
+	padding: 0.3em;
+	border-radius: 50% !important;
+}

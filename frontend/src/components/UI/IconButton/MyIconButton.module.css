@@ -1,0 +1,9 @@
+.border {
+	padding: 0.5em;
+}
+
+.border,
+.icon {
+	width: fit-content;
+	border-radius: 50% !important;
+}

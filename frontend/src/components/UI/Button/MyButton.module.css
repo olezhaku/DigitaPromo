@@ -1,0 +1,9 @@
+.button {
+	border-radius: 0.5em !important;
+	text-transform: inherit !important;
+}
+
+.button span {
+	margin: 0;
+	padding: 0.4em 0;
+}

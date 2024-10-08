@@ -1,0 +1,40 @@
+@font-face {
+	font-family: Neuwelt-Black;
+	src: url(../../fonts/Neuwelt-Black.ttf);
+}
+
+.container {
+	/* width: 100%; */
+	height: calc(100vh - 3em);
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 1.5em;
+	padding: 1.5em;
+}
+
+.modal {
+}
+
+.title {
+	line-height: 0.75em !important;
+	font-family: Neuwelt-Black !important;
+}
+
+.body {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5em;
+}
+
+.buttons {
+	display: flex;
+	gap: 1.5em;
+	justify-content: end;
+	/* width: fit-content; */
+}
+
+.buttons > button {
+	border-radius: 0.5em !important;
+}

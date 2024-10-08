@@ -1,0 +1,94 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 250px;
+}
+
+.numbers {
+	display: flex;
+	gap: 20px;
+
+	position: relative;
+	bottom: 140px;
+}
+
+.numbers > p {
+	font-weight: 900;
+	font-size: 18px;
+}
+
+.zero {
+	position: relative;
+	left: 8px;
+	transform: rotate(-90deg);
+}
+
+.five,
+.ten,
+.fiveteen {
+	position: relative;
+	left: 15px;
+}
+
+.five {
+	bottom: 50px;
+	left: 2px;
+	transform: rotate(-45deg);
+}
+
+.ten {
+	bottom: 70px;
+}
+
+.fiveteen {
+	bottom: 51px;
+	left: 22px;
+	transform: rotate(45deg);
+}
+
+.twenty {
+	position: relative;
+	top: 4px;
+	transform: rotate(90deg);
+}
+
+.ten,
+.fiveteen,
+.twenty {
+	color: #55b01b;
+}
+
+.border,
+.circle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50% !important;
+}
+
+.border {
+	margin: auto;
+	width: 98px;
+	height: 98px;
+
+	position: relative;
+	bottom: 75px;
+}
+
+.circle {
+	width: 66px;
+	height: 66px;
+}
+
+.circle > h4 {
+	font-weight: 900;
+	color: #55b01b;
+}
+
+.gauge {
+	position: relative;
+	bottom: 253px;
+	left: 0.5px;
+	width: 225px;
+}

@@ -1,0 +1,16 @@
+export const urlsMap = {
+	Промоутеры: "promoters",
+	"База кандидатов": "candidates",
+	"Баланс активности": "balance",
+	Удержания: "fines",
+	История: "history",
+	Статистика: "statistics",
+	"Яндекс Плюс": "yandexplus",
+	"Мое расписание": "my_schedule",
+	Расписание: "schedule",
+	"Аудит расписания": "schedule_audit",
+	Видеоселфи: "videoselfie",
+	Сверка: "reconciliation",
+	"Срез Яндекс": "yandex_cut",
+	Расписания: "schedules",
+};

@@ -1,0 +1,8 @@
+.container {
+	width: 100%;
+}
+
+.selector {
+	border-radius: 0.5em !important;
+	height: 2.75em !important;
+}

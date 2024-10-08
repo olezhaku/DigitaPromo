@@ -1,0 +1,13 @@
+.container {
+	padding: 1.5em 0;
+	display: flex;
+	gap: 1.5em;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5em;
+	width: 100%;
+	height: calc(100vh - 1.5em - 1.5em);
+}

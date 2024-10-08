@@ -1,0 +1,28 @@
+.filters {
+	padding: 1.5em;
+	border-radius: 0.5em !important;
+}
+
+.container {
+	display: flex;
+	justify-content: space-between;
+	gap: 1.5em;
+}
+
+.item {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 1.5em;
+	justify-content: space-between;
+}
+
+.item > p {
+	margin-bottom: 0.5em;
+	text-align: center;
+}
+
+.remove {
+	text-align: end;
+}

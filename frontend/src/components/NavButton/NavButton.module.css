@@ -1,0 +1,16 @@
+.navbutton {
+	text-transform: inherit !important;
+	justify-content: start !important;
+	padding: 1em !important;
+	border-radius: 0.5em !important;
+	width: 100%;
+}
+
+.navbutton > span {
+	padding-right: 1em;
+	margin: 0;
+}
+
+.iconbutton {
+	padding: 0.5em !important;
+}

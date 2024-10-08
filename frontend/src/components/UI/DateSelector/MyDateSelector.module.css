@@ -1,0 +1,9 @@
+.button {
+	height: 2.75rem;
+	width: 100%;
+	border-radius: 0.5em !important;
+	text-transform: inherit !important;
+	opacity: 0.3;
+	display: flex !important;
+	justify-content: space-between !important;
+}

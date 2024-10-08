@@ -1,0 +1,11 @@
+.content {
+	display: flex;
+	flex-direction: column;
+	border-radius: 1.5em !important;
+	overflow: hidden;
+	height: 100%;
+}
+
+.title {
+	padding: 1em;
+}

@@ -1,0 +1,17 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: "Roboto";
+}
+
+body {
+	overflow: hidden;
+}
+
+.dark {
+	background: #000;
+}
+
+.light {
+	background: #bcbcbc;
+}
