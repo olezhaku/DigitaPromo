@@ -63,8 +63,25 @@ fastify.post('/register', async (req, reply) => {
     return reply.status(400).send({ error: 'Все поля обязательны' });
   }
 
+  const usernameRegex = /^[A-Za-z0-9]{4,}$/;
+  if (!usernameRegex.test(username)) {
+    return reply.status(400).send({ error: 'Логин должен содержать только английские буквы и цифры и быть не короче 4 символов.' });
+  }
+    
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/;
+  if (!passwordRegex.test(password)) {
+    return reply.status(400).send({
+      error: 'Пароль должен содержать минимум 7 символов, включая одну заглавную, одну строчную букву, одну цифру и один специальный символ (@, $, и т.д.)'
+    });
+  }
+
+  const phoneRegex = /^(8\d{10}|\+\d{11})$/;
+  if (!phoneRegex.test(phone)) {
+    return reply.status(400).send({ error: 'Некорректный формат телефона. Допустимй формат +7 (xxx) xxx xx-xx или 8 (xxx) xxx xx-xx, без скобок и пробелов' });
+  }
+
   const birthDate = new Date(date_of_birth);
-  if (isNaN(birthDate)) {
+  if (isNaN(birthDate.getTime())) {
     return reply.status(400).send({ error: 'Неверный формат даты рождения' });
   }
 
@@ -75,7 +92,6 @@ fastify.post('/register', async (req, reply) => {
 
   try {
     const hashedPassword = await hashPassword(password);
-
     const user = await User.create({
       username,
       password: hashedPassword, 
@@ -88,7 +104,7 @@ fastify.post('/register', async (req, reply) => {
 
     const token = generateToken(user);
 
-    return reply.code(201).send({ token }); 
+    return reply.send({ token }); 
   } catch (error) {
     console.error('Ошибка при регистрации пользователя:', error);
     return reply.status(500).send({ error: 'Ошибка при регистрации' });
@@ -112,6 +128,9 @@ fastify.post('/login', async (req, reply) => {
       if (user.condition === 0) {
         return reply.status(403).send({ error: 'Аккаунт не подтверждён' });
       }
+      if (user.condition === 2) {
+        return reply.status(403).send({ error: 'Ваша заявка не регистрацию отклонена' });
+      }
       const token = generateToken(user);
       
       return reply.send({ "token":token, "message":'Вы успешно авторизировались!'});
@@ -124,7 +143,7 @@ fastify.post('/login', async (req, reply) => {
 
 
 fastify.post('/chektoken', { preHandler: verifyToken }, async (req, reply) => {
-    return reply.status(403).send({  message: 'Token is correct' })
+    return reply.send({  message: 'Token is correct' })
 })
 
 fastify.post('/users', { preHandler: verifyToken }, async (req, reply) => {
@@ -191,18 +210,21 @@ fastify.post('/users', { preHandler: verifyToken }, async (req, reply) => {
   });
   
 fastify.post('/confirmuser', { preHandler: verifyToken }, async (req, reply) => {
-    const { user_id } = req.body;
+    const { user_id, status } = req.body;
   
     const admin_id = req.user.id;
     const admin = await User.findByPk(admin_id);
-  
+    const condition = 1
     if (admin.role === 1) {
       const user = await User.findByPk(user_id);
       
-      if (user !== null) {
-        user.condition = 1;
+      if (user !== null, user.condition == 0 ) {
+        if (status != 'accept'){
+          condition = 2
+        }
+        user.condition = condition;
         await user.save();
-        return reply.send({ message: 'Пользователь подтверждён', user_id });
+        return reply.send({ message: `Статус пользователя:"${status}"`, user_id });
       } else {
         return reply.status(404).send({ error: 'Пользователь не найден' });
       }
