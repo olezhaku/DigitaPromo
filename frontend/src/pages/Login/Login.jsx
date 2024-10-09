@@ -9,39 +9,54 @@ import MyButton from "../../components/UI/Button/MyButton";
 const Login = () => {
 	return (
 		<Box className={classes.container}>
-			<Paper className={classes.modal}>
-				<Typography className={classes.title} variant="h2">
-					Digital <br />
-					Promo
+			<Box>
+				<Typography className={classes.logo} variant="h3">
+					Digital Promo
 				</Typography>
 
-				<Box className={classes.body}>
-					<Box>
-						<Typography>Логин</Typography>
-						<MyInput
-							placeholder="Введите логин"
-							// style={{ background: "white" }}
-						/>
-					</Box>
+				<Paper className={classes.modal}>
+					<Typography className={classes.title} variant="h5">
+						Вход
+					</Typography>
 
-					<Box>
-						<Typography>Пароль</Typography>
-						<MyInput
-							placeholder="Введите пароль"
-							// style={{ background: "white" }}
-						/>
-					</Box>
+					<Box className={classes.body}>
+						<Box>
+							<Typography>Логин</Typography>
 
-					<Box className={classes.buttons}>
-						<Button variant="contained" color="primary">
-							Войти
-						</Button>
-						<Button variant="contained" color="primary">
-							Регистрация
-						</Button>
+							<MyInput
+								placeholder="Введите логин"
+								// style={{ background: "white" }}
+							/>
+						</Box>
+
+						<Box>
+							<Typography>Пароль</Typography>
+							<MyInput
+								placeholder="Введите пароль"
+								// style={{ background: "white" }}
+							/>
+						</Box>
+
+						<Box>
+							<Box className={classes.buttons}>
+								<Button variant="contained" color="primary">
+									Войти
+								</Button>
+
+								<Button variant="outlined" color="primary">
+									Регистрация
+								</Button>
+							</Box>
+
+							<Box className={classes.rebuild}>
+								<Button variant="text" color="primary">
+									Восстановить пароль
+								</Button>
+							</Box>
+						</Box>
 					</Box>
-				</Box>
-			</Paper>
+				</Paper>
+			</Box>
 		</Box>
 	);
 };
