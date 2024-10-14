@@ -59,7 +59,10 @@ const Filters = () => {
 			<Box className={classes.remove}>
 				<MyButton
 					value="Сбросить"
-					icon={<CloseIcon color="primary" />}
+					variant="contained"
+					color="inherit"
+					textColor="primary"
+					endIcon={<CloseIcon color="primary" />}
 				/>
 			</Box>
 		</Paper>

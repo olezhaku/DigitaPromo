@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import Background from "./components/UI/Background/Background";
 import Main from "./components/Main/Main";
 import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
+import Error from "./pages/Error/Error";
 
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -12,7 +13,14 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./styles/App.css";
 
 function App() {
-	const [isDarkTheme, setIsDarkTheme] = useState(false);
+	const [isDarkTheme, setIsDarkTheme] = useState(
+		() => localStorage.getItem("theme") === "true"
+	);
+
+	useEffect(() => {
+		localStorage.setItem("theme", isDarkTheme);
+		document.body.classList.toggle("dark", isDarkTheme);
+	}, [isDarkTheme]);
 
 	const toggleTheme = () => {
 		setIsDarkTheme(!isDarkTheme);
@@ -31,8 +39,24 @@ function App() {
 
 				<div className={`App ${isDarkTheme ? "dark" : "light"}`}>
 					<Routes>
-						<Route path="/login" element={<Login />} />
-
+						<Route
+							path="/login"
+							element={
+								<Login
+									isDarkTheme={isDarkTheme}
+									toggleTheme={toggleTheme}
+								/>
+							}
+						/>
+						<Route
+							path="/register"
+							element={
+								<Register
+									isDarkTheme={isDarkTheme}
+									toggleTheme={toggleTheme}
+								/>
+							}
+						/>
 						<Route
 							path="/admin/*"
 							element={
@@ -42,9 +66,9 @@ function App() {
 								/>
 							}
 						/>
-					</Routes>
 
-					{/* <Background isDarkTheme={isDarkTheme} /> */}
+						<Route path={"*" || "/error"} element={<Error />} />
+					</Routes>
 				</div>
 			</ThemeProvider>
 		</BrowserRouter>

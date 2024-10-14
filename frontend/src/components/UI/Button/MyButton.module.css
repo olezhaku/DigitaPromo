@@ -1,9 +1,11 @@
 .button {
-	border-radius: 0.5em !important;
+	border-radius: 1em !important;
 	text-transform: inherit !important;
+	height: 2.75rem;
+	gap: 0.5em;
 }
 
 .button span {
-	margin: 0;
-	padding: 0.4em 0;
+	/* margin: 0;
+	padding: 0.4em 0; */
 }

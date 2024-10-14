@@ -1,5 +1,6 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { urlsMap } from "../../utils/urls";
 
 import { Paper, Typography } from "@mui/material";
 
@@ -11,10 +12,15 @@ import History from "../../pages/History/History";
 import Statistics from "../../pages/Statistics/Statistics";
 
 import classes from "./Content.module.css";
-import { Route, Routes } from "react-router-dom";
 
 const Content = () => {
-	const activeTab = useSelector((state) => state.tab.tab);
+	const location = useLocation();
+
+	const currentUrl = location.pathname.split("/")[2];
+
+	const activeTab = Object.entries(urlsMap)
+		.filter(([key, value]) => value === currentUrl)
+		.map(([key]) => key);
 
 	return (
 		<Paper className={classes.content}>
@@ -29,6 +35,7 @@ const Content = () => {
 				<Route path="/fines" element={<Fines />} />
 				<Route path="/history" element={<History />} />
 				<Route path="/statistics" element={<Statistics />} />
+				<Route path="*" element={<Navigate to="/error" replace />} />
 			</Routes>
 		</Paper>
 	);

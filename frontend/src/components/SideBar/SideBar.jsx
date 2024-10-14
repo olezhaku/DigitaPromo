@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
-
-import { useSelector } from "react-redux";
-import { iconMap } from "../../store/tabSlice";
+import { navItems, iconMap } from "../../utils/tabNames";
+import { Link } from "react-router-dom";
+import { urlsMap } from "../../utils/urls";
 
 import NavButton from "../NavButton/NavButton";
 import { Box, Paper, Typography, Divider, List } from "@mui/material";
 
-import { Link } from "react-router-dom";
-import { urlsMap } from "../../utils/urls";
-
 import classes from "./SideBar.module.css";
 
 const SideBar = () => {
-	const navItems = useSelector((state) => state.tab.items);
 	const [isWideScreen, setIsWideScreen] = useState(window.innerWidth > 1080);
 
 	const handleResize = () => {
@@ -59,27 +55,22 @@ const SideBar = () => {
 							</Typography>
 						)}
 
-						{Object.keys(navItem.sections).map(
-							(sectionItem, section) => (
-								<Link
-									key={sectionItem}
-									to={getUrlForSection(sectionItem)}
-									style={{
-										textDecoration: "none",
-										color: "inherit",
-									}}
-								>
-									<NavButton
-										key={sectionItem}
-										sectionItem={sectionItem}
-										title={title}
-										section={section}
-										NavIcon={iconMap[sectionItem]}
-										isWideScreen={isWideScreen}
-									/>
-								</Link>
-							)
-						)}
+						{navItem.sections.map((section, index) => (
+							<Link
+								key={index}
+								to={getUrlForSection(section)}
+								style={{
+									textDecoration: "none",
+									color: "inherit",
+								}}
+							>
+								<NavButton
+									sectionItem={section}
+									NavIcon={iconMap[section]}
+									isWideScreen={isWideScreen}
+								/>
+							</Link>
+						))}
 					</Box>
 				))}
 			</List>
