@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../db.js'; 
+import sequelize from '../db.js';
 
 const User = sequelize.define('User', {
   username: {
@@ -32,9 +32,17 @@ const User = sequelize.define('User', {
     defaultValue: 0,
     allowNull: false,
   },
+  telegram_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  telegram_username: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   phone: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   ref_login: {
     type: DataTypes.STRING,
@@ -61,7 +69,7 @@ const User = sequelize.define('User', {
   },
   role: {
     type: DataTypes.INTEGER,
-    defaultValue: 1,
+    defaultValue: 0,
     allowNull: true,
   },
   photo: {
@@ -73,6 +81,18 @@ const User = sequelize.define('User', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  passportPhoto1Url: { 
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  passportPhoto2Url: { 
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  parent_phone: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  }
 });
 
 export default User;
