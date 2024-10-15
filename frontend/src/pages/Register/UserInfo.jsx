@@ -1,7 +1,6 @@
 import React from "react";
 
 import {
-	Alert,
 	Box,
 	FormControlLabel,
 	Radio,
@@ -13,74 +12,61 @@ import MyInput from "../../components/UI/Input/MyInput";
 
 import classes from "./Register.module.css";
 
-const UserInfo = ({ error }) => {
+const UserInfo = ({ parentPhone, onChange, errors }) => {
 	return (
 		<Box className={classes.inputs}>
 			<Box className={classes.field}>
 				<MyInput
+					error={Boolean(errors.surname)}
 					placeholder="Фамилия"
-					// onChange={(event) =>
-					// 	handleInputChange(event, "username")
-					// }
+					onChange={(event) => onChange(event, "surname")}
 				/>
 			</Box>
-
 			<Box className={classes.field}>
 				<MyInput
+					error={Boolean(errors.name)}
 					placeholder="Имя"
-					// onChange={(event) => handleInputChange(event, "username")}
+					onChange={(event) => onChange(event, "name")}
 				/>
 			</Box>
-
 			<Box className={classes.field}>
 				<MyInput
+					error={Boolean(errors.patronymic)}
 					placeholder="Отчество"
-					// onChange={(event) => handleInputChange(event, "username")}
+					onChange={(event) => onChange(event, "patronymic")}
 				/>
 			</Box>
-
-			<Box className={classes.field}>
-				<MyInput
-					placeholder="Телеграм@"
-
-					// onChange={(event) => handleInputChange(event, "password")}
-				/>
-			</Box>
-
 			<Box className={classes.row}>
 				<Box className={classes.field}>
 					<MyInput
+						error={Boolean(errors.date_of_birth)}
 						placeholder="Дата рождения"
-
-						// onChange={(event) => handleInputChange(event, "password")}
+						onChange={(event) => onChange(event, "date_of_birth")}
 					/>
 				</Box>
 
 				<Box className={classes.field}>
 					<MyInput
 						placeholder="Город"
-
-						// onChange={(event) => handleInputChange(event, "password")}
+						onChange={(event) => onChange(event, "city")}
 					/>
 				</Box>
 			</Box>
-
 			<Box className={classes.field}>
 				<MyInput
 					placeholder="Рекрутер"
-
-					// onChange={(event) => handleInputChange(event, "password")}
+					onChange={(event) => onChange(event, "recruitLogin")}
 				/>
 			</Box>
-
-			<Box className={classes.field}>
-				<MyInput
-					placeholder="Номер телефона родителя"
-
-					// onChange={(event) => handleInputChange(event, "password")}
-				/>
-			</Box>
-
+			{parentPhone && (
+				<Box className={classes.field}>
+					<MyInput
+						error={Boolean(errors.parentPhone)}
+						placeholder="Номер телефона родителя"
+						onChange={(event) => onChange(event, "parentPhone")}
+					/>
+				</Box>
+			)}
 			<RadioGroup row className={classes.settings}>
 				<Typography color="textSecondary">
 					Работал(а) в сфере продаж
@@ -100,8 +86,6 @@ const UserInfo = ({ error }) => {
 					/>
 				</Box>
 			</RadioGroup>
-
-			{error && <Alert severity="error">{error}</Alert>}
 		</Box>
 	);
 };

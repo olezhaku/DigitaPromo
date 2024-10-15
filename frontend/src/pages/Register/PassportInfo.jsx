@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-import { Alert, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Switch from "react-switch";
 
 import MyInput from "../../components/UI/Input/MyInput";
 
 import classes from "./Register.module.css";
 
-const PassportInfo = ({ error }) => {
+const PassportInfo = ({ errors, onChange }) => {
 	const [isProcessing, setIsProcessing] = useState(false);
 
 	return (
@@ -15,16 +15,18 @@ const PassportInfo = ({ error }) => {
 			<Box className={classes.field}>
 				<MyInput
 					placeholder="Серия и номер паспорта"
-					// onChange={(event) =>
-					// 	handleInputChange(event, "username")
-					// }
+					error={Boolean(errors.passportNumber)}
+					onChange={(event) =>
+						onChange(event, "passportNumber", true)
+					}
 				/>
 			</Box>
 
 			<Box className={classes.field}>
 				<MyInput
 					placeholder="Кем выдан"
-					// onChange={(event) => handleInputChange(event, "username")}
+					error={Boolean(errors.issuedBy)}
+					onChange={(event) => onChange(event, "issuedBy", true)}
 				/>
 			</Box>
 
@@ -32,16 +34,18 @@ const PassportInfo = ({ error }) => {
 				<Box className={classes.field}>
 					<MyInput
 						placeholder="Дата выдачи"
-
-						// onChange={(event) => handleInputChange(event, "password")}
+						error={Boolean(errors.issueDate)}
+						onChange={(event) => onChange(event, "issueDate", true)}
 					/>
 				</Box>
 
 				<Box className={classes.field}>
 					<MyInput
 						placeholder="Код подразделения"
-
-						// onChange={(event) => handleInputChange(event, "password")}
+						error={Boolean(errors.divisionCode)}
+						onChange={(event) =>
+							onChange(event, "divisionCode", true)
+						}
 					/>
 				</Box>
 			</Box>
@@ -49,23 +53,28 @@ const PassportInfo = ({ error }) => {
 			<Box className={classes.field}>
 				<MyInput
 					placeholder="Адрес регистрации"
-					// onChange={(event) => handleInputChange(event, "username")}
+					error={Boolean(errors.registrationAddress)}
+					onChange={(event) =>
+						onChange(event, "registrationAddress", true)
+					}
 				/>
 			</Box>
 
 			<Box className={classes.field}>
 				<MyInput
 					placeholder="Фактический адрес проживания"
-
-					// onChange={(event) => handleInputChange(event, "password")}
+					error={Boolean(errors.residenceAddress)}
+					onChange={(event) =>
+						onChange(event, "residenceAddress", true)
+					}
 				/>
 			</Box>
 
 			<Box className={classes.field}>
 				<MyInput
 					placeholder="ИНН"
-
-					// onChange={(event) => handleInputChange(event, "password")}
+					error={Boolean(errors.inn)}
+					onChange={(event) => onChange(event, "inn", true)}
 				/>
 			</Box>
 
@@ -73,10 +82,6 @@ const PassportInfo = ({ error }) => {
 				<Switch
 					onChange={() => setIsProcessing(!isProcessing)}
 					checked={isProcessing}
-					// offColor={"#1976d2"}
-					// onColor={"#393939"}
-					// onHandleColor={"#1f1f1f"}
-					// activeBoxShadow={"0 0 2px 2px #1976d2"}
 					uncheckedIcon={false}
 					checkedIcon={false}
 					id="normal-switch"
@@ -86,8 +91,6 @@ const PassportInfo = ({ error }) => {
 					Согласие на обработку персональных данных
 				</Typography>
 			</Box>
-
-			{error && <Alert severity="error">{error}</Alert>}
 		</Box>
 	);
 };

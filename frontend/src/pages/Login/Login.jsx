@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -10,9 +10,16 @@ import MyButton from "../../components/UI/Button/MyButton";
 import ThemeSwitcher from "../../components/ThemeSwitcher/ThemeSwitcher";
 
 import classes from "./Login.module.css";
+import { fetchAuth } from "../../utils/fetchData";
 
 const Login = ({ isDarkTheme, toggleTheme }) => {
 	const [inputValues, setInputValues] = useState({
+		username: "",
+		password: "",
+		token: "",
+		code: "",
+	});
+	const [send, setSend] = useState({
 		username: "",
 		password: "",
 	});
@@ -28,26 +35,13 @@ const Login = ({ isDarkTheme, toggleTheme }) => {
 		});
 	};
 
-	function fetchAuth(data) {
-		axios
-			.post("http://127.0.0.1:5000/login", data)
-			.then((response) => {
-				console.log("Успех:", response.data);
+	useEffect(() => {
+		console.log(send);
+		fetchAuth("login", send);
+	}, [send]);
 
-				if (response.data) {
-					setToken(response.data.token);
-
-					navigate("/admin/statistics");
-				}
-			})
-			.catch((error) => {
-				console.error("Ошибка ответа:", error.response.data);
-				setError(Object.values(error.response.data));
-			});
-	}
-
-	// 	username: "exampleUser12",
-	// 	password: "Password1@",
+	// 	username: STruAS,
+	// 	password: Password@123,
 
 	return (
 		<Paper className={classes.background}>
@@ -70,10 +64,10 @@ const Login = ({ isDarkTheme, toggleTheme }) => {
 
 				<Box className={classes.inputs}>
 					<Box className={classes.field}>
-						<Typography color="textSecondary">Email</Typography>
+						<Typography color="textSecondary">Логин</Typography>
 
 						<MyInput
-							placeholder="youremail@gmail.com"
+							placeholder="Введите логин"
 							onChange={(event) =>
 								handleInputChange(event, "username")
 							}
@@ -114,7 +108,7 @@ const Login = ({ isDarkTheme, toggleTheme }) => {
 								value="Войти"
 								endIcon={<EastIcon />}
 								style={{ padding: "0 3.5em" }}
-								onClick={() => fetchAuth(inputValues)}
+								onClick={() => setSend(inputValues)}
 							/>
 
 							<MyButton

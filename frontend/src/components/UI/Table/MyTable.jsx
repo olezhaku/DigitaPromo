@@ -1,39 +1,18 @@
 import React from "react";
 
-import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
-
-import classes from "./MyTable.module.css";
 import {
+	Paper,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
-	TablePagination,
 	TableRow,
 } from "@mui/material";
 
-const MyTable = () => {
-	const columns = [
-		{
-			field: "firstName",
-			headerName: "First name",
-			sortable: true,
-		},
-		{
-			field: "lastName",
-			headerName: "Last name",
-			sortable: true,
-		},
-		{
-			field: "age",
-			headerName: "Age",
-			type: "number",
-			sortable: true,
-		},
-	];
+import classes from "./MyTable.module.css";
 
+const MyTable = () => {
 	const data = [
 		{ id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
 		{ id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },

@@ -1,16 +1,18 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { changeUserInfoHandler, setError } from "../../store/registerSlice";
+import { ageValidation, inputValidation } from "../../utils/inputValidation";
+import { fetchAuth } from "../../utils/fetchData";
+import { steps } from "../../utils/stepper";
 
 import {
+	Alert,
 	Box,
 	createTheme,
 	Divider,
 	Fade,
 	Paper,
-	Step,
-	StepLabel,
-	Stepper,
 	Typography,
 } from "@mui/material";
 import EastIcon from "@mui/icons-material/East";
@@ -18,14 +20,26 @@ import WestIcon from "@mui/icons-material/West";
 
 import ThemeSwitcher from "../../components/ThemeSwitcher/ThemeSwitcher";
 import MyButton from "../../components/UI/Button/MyButton";
+import MyStepper from "../../components/UI/Stepper/MyStepper";
+
+import LoginPass from "./LoginPass";
 import UserInfo from "./UserInfo";
+import UploadFoto from "./UploadFoto";
 import PassportInfo from "./PassportInfo";
-import End from "../../img/End";
+import TgAuth from "./TgAuth";
+import TheEnd from "./TneEnd";
 
 import classes from "./Register.module.css";
 
 const Register = ({ isDarkTheme, toggleTheme }) => {
-	//stepper
+	//states
+	const dispatch = useDispatch();
+	const { values, errors, passportErrors } = useSelector(
+		(state) => state.register
+	);
+	const [LinkAuth, setLinkAuth] = useState("");
+
+	//theme
 	const theme = createTheme({
 		palette: {
 			mode: isDarkTheme ? "dark" : "light",
@@ -35,57 +49,142 @@ const Register = ({ isDarkTheme, toggleTheme }) => {
 		? theme.palette.common.black
 		: theme.palette.common.white;
 
+	//steps
 	const [activeStep, setActiveStep] = useState(0);
 	const [animation, setAnimation] = useState(true);
-	const steps = [
-		{ label: "Номер телефона", description: "Подтвердите Телеграм" },
-		{ label: "Введите информацию", description: "Введите данные" },
-		{
-			label: "Загрузить фотографии",
-			description: "Загрузите фотографии паспорта",
-			mini: "Они нужны для проверки",
-		},
-		{ label: "Паспортные данные", description: "Еще немного..." },
-	];
 
-	//inputs
-	const [inputValues, setInputValues] = useState({});
-	const [error, setError] = useState("");
+	//errors
+	const [allFields, setAllFields] = useState("");
+	const error = Object.values(errors).filter((error) => error !== false)[0];
+	const passportError = Object.values(passportErrors).filter(
+		(error) => error !== false
+	)[0];
 
-	// eslint-disable-next-line
-	const handleInputChange = (event, inputName) => {
-		setInputValues({
-			...inputValues,
-			[inputName]: event.target.value,
-		});
+	useEffect(() => {
+		setAllFields("");
+		if (activeStep === 4) {
+			fetchAuth("register", values, setLinkAuth);
+			console.log(values);
+		}
+	}, [passportError, error, activeStep]);
+
+	//input
+	const handleInputChange = (event, field, passport) => {
+		let value = event.target.value;
+
+		const validationResult = inputValidation(
+			field,
+			value,
+			values.password0
+		);
+
+		if (passport) {
+			if (validationResult === true) {
+				dispatch(changeUserInfoHandler({ field, value, passport }));
+			} else {
+				dispatch(
+					setError({ field, error: validationResult, passport })
+				);
+			}
+		} else {
+			if (validationResult === true) {
+				dispatch(changeUserInfoHandler({ field, value }));
+			} else if (field === "recruitLogin" || field === "city") {
+				dispatch(changeUserInfoHandler({ field, value }));
+			} else {
+				dispatch(setError({ field, error: validationResult }));
+			}
+		}
 	};
 
-	// eslint-disable-next-line
-	function fetchRegister(data) {
-		axios
-			.post("http://127.0.0.1:5000/register", data)
-			.then((response) => {
-				console.log("Успех:", response.data);
+	//steps
+	const activeStepPage = () => {
+		switch (activeStep) {
+			case 0:
+				return (
+					<LoginPass onChange={handleInputChange} errors={errors} />
+				);
+			case 1:
+				return (
+					<UserInfo
+						onChange={handleInputChange}
+						parentPhone={ageValidation(values.date_of_birth)}
+						errors={errors}
+					/>
+				);
+			case 2:
+				return <UploadFoto />;
+			case 3:
+				return (
+					<PassportInfo
+						errors={passportErrors}
+						onChange={handleInputChange}
+					/>
+				);
+			case 4:
+				return <TgAuth LinkAuth={LinkAuth} />;
+			default:
+				break;
+		}
+	};
 
-				if (response.data) {
-					// setToken(response.data.token);
-				}
-			})
-			.catch((error) => {
-				console.error("Ошибка ответа:", error.response.data);
-				setError(Object.values(error.response.data));
-			});
-		// 	username: "exampleUser12",
-		// 	password: "Password1@",
-	}
-
-	//stepper
 	const handleNext = () => {
-		setAnimation(false);
-		setTimeout(() => {
-			setActiveStep((prevActiveStep) => prevActiveStep + 1);
-			setAnimation(true);
-		}, 300);
+		if (activeStep === 0) {
+			if (values.username && values.password0 && values.password) {
+				if (!error) {
+					setAnimation(false);
+					setTimeout(() => {
+						setActiveStep((prevActiveStep) => prevActiveStep + 1);
+						setAnimation(true);
+					}, 300);
+				}
+			} else {
+				setAllFields("Все поля обязательны");
+			}
+		} else if (activeStep === 1) {
+			if (
+				values.name &&
+				values.surname &&
+				values.date_of_birth &&
+				values.city
+			) {
+				if (!error) {
+					setAnimation(false);
+					setTimeout(() => {
+						setActiveStep((prevActiveStep) => prevActiveStep + 1);
+						setAnimation(true);
+					}, 300);
+				}
+			} else {
+				setAllFields("Все поля обязательны");
+			}
+		} else if (activeStep === 3) {
+			if (
+				values.passportData.passportNumber &&
+				values.passportData.issuedBy &&
+				values.passportData.issueDate &&
+				values.passportData.divisionCode &&
+				values.passportData.registrationAddress &&
+				values.passportData.residenceAddress &&
+				values.passportData.inn
+			) {
+				if (!passportError) {
+					setAnimation(false);
+					setTimeout(() => {
+						setActiveStep((prevActiveStep) => prevActiveStep + 1);
+						setAnimation(true);
+					}, 300);
+				}
+			} else {
+				setAllFields("Все поля обязательны");
+			}
+		} else if (activeStep === 2) {
+			setAnimation(false);
+			setTimeout(() => {
+				setActiveStep((prevActiveStep) => prevActiveStep + 1);
+				setAnimation(true);
+			}, 300);
+		}
 	};
 
 	const handleBack = () => {
@@ -96,25 +195,10 @@ const Register = ({ isDarkTheme, toggleTheme }) => {
 		}, 300);
 	};
 
-	const activeStepPage = () => {
-		switch (activeStep) {
-			case 0:
-				return <div></div>;
-			case 1:
-				return <UserInfo error={error} />;
-			case 2:
-				return <div></div>;
-			case 3:
-				return <PassportInfo error={error} />;
-			default:
-				break;
-		}
-	};
-
 	//link
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 
-	return activeStep < 4 ? (
+	return activeStep < 5 ? (
 		<Box className={classes.container}>
 			<Paper
 				className={classes.left__side}
@@ -124,73 +208,18 @@ const Register = ({ isDarkTheme, toggleTheme }) => {
 				}}
 			>
 				<Box className={classes.logo}>
-					<Typography variant="h3">Digital Promo</Typography>
+					<Typography variant="h3">Offer Project</Typography>
 				</Box>
+
 				<Box className={classes.stepper}>
 					<Typography variant="h4">Давай Начнем!</Typography>
 
-					<Stepper
+					<MyStepper
 						activeStep={activeStep}
-						orientation="vertical"
-						sx={{
-							"& .MuiStepIcon-root": {
-								fontSize: "2rem",
-								borderRadius: "50%",
-							},
-							"& .MuiStepConnector-line": { marginLeft: "3px" },
-							"& .Mui-active": {
-								"&.MuiStepIcon-root": {
-									border: `solid ${colorReverse} 3px`,
-								},
-								"& .MuiStepConnector-line": {
-									borderColor: colorReverse,
-								},
-							},
-							"& .Mui-completed": {
-								"&.MuiStepIcon-root": { color: colorReverse },
-								"& .MuiStepConnector-line": {
-									borderColor: colorReverse,
-								},
-							},
-							"& .Mui-disabled": {
-								"& .MuiStepIcon-root": {
-									color: theme.palette.primary.main,
-									border: `solid ${
-										isDarkTheme ? "#6f6f6f" : "#b4b4b4"
-									} 3px`,
-								},
-							},
-						}}
-					>
-						{steps.map((step, index) => (
-							<Step key={step.label}>
-								<StepLabel
-									sx={{
-										"& .Mui-active": {
-											"&.MuiStepLabel-label": {
-												color: colorReverse,
-											},
-										},
-										"& .Mui-completed": {
-											"&.MuiStepLabel-label": {
-												color: colorReverse,
-											},
-										},
-										"& .MuiStepLabel-label": {
-											color: colorReverse,
-										},
-										"& .Mui-disabled": {
-											color: isDarkTheme
-												? "#6f6f6f"
-												: "#b4b4b4",
-										},
-									}}
-								>
-									{step.label}
-								</StepLabel>
-							</Step>
-						))}
-					</Stepper>
+						theme={theme}
+						colorReverse={colorReverse}
+						isDarkTheme={isDarkTheme}
+					/>
 				</Box>
 			</Paper>
 
@@ -220,7 +249,25 @@ const Register = ({ isDarkTheme, toggleTheme }) => {
 							<Typography>{steps[activeStep].mini}</Typography>
 						</Box>
 
-						<Box className={classes.body}>{activeStepPage()}</Box>
+						<Box className={classes.body}>
+							{activeStepPage()}
+
+							<Fade
+								in={Boolean(
+									allFields || error || passportError
+								)}
+							>
+								<Box sx={{ height: "6em" }}>
+									{(allFields || error || passportError) && (
+										<Alert severity="error">
+											{allFields ||
+												error ||
+												passportError}
+										</Alert>
+									)}
+								</Box>
+							</Fade>
+						</Box>
 					</Box>
 				</Fade>
 
@@ -251,35 +298,7 @@ const Register = ({ isDarkTheme, toggleTheme }) => {
 			</Paper>
 		</Box>
 	) : (
-		<Box className={classes.container}>
-			<Paper className={classes.right__side}>
-				<Box className={classes.switcher}>
-					<ThemeSwitcher
-						isDarkTheme={isDarkTheme}
-						toggleTheme={toggleTheme}
-					/>
-				</Box>
-
-				<Box className={classes.image}>
-					<End isDarkTheme={isDarkTheme} />
-				</Box>
-
-				<Box className={classes.success}>
-					<Typography variant="h5">
-						Вы успешно зарегистрировались!
-					</Typography>
-
-					<MyButton
-						variant="contained"
-						color="primary"
-						value="Начать"
-						endIcon={<EastIcon />}
-						style={{ padding: "0 3.5em" }}
-						onClick={() => navigate("/admin/statistics")}
-					/>
-				</Box>
-			</Paper>
-		</Box>
+		<TheEnd />
 	);
 };
 

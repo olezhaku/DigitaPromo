@@ -6,7 +6,7 @@ import { Avatar, Box, Paper, Toolbar, Typography } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import WalletIcon from "../Icons/WalletIcon";
 
-import avatar from "./../../img/avatar.jpeg";
+import avatar from "../../pages/img/avatar.jpeg";
 
 import classes from "./Header.module.css";
 

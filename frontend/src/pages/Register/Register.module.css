@@ -53,6 +53,8 @@
 	gap: 1.5em;
 }
 .left__side {
+	display: flex;
+	flex-direction: column;
 	max-width: 360px;
 }
 
@@ -67,6 +69,10 @@
 	margin-bottom: 1.5rem;
 }
 
+.stepper {
+	overflow: auto;
+}
+
 .switcher {
 	text-align: end;
 }
@@ -74,11 +80,24 @@
 .content {
 	justify-content: space-around;
 	height: 100%;
-	padding: 3em 0;
+	padding: 1.5em 0;
+	overflow: auto;
 }
 
 .title {
 	font-weight: 500;
+}
+
+.body {
+	max-width: 430px;
+	min-width: 430px;
+	margin: auto;
+	gap: 1.5em;
+	padding-top: 1.5em;
+}
+.inputs,
+.field {
+	width: 100%;
 }
 
 .field > p {

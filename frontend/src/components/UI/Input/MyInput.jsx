@@ -8,7 +8,7 @@ import SearchIcon from "@mui/icons-material/SearchOutlined";
 
 import classes from "./MyInput.module.css";
 
-const MyInput = ({ placeholder, Icon, style, variant, onChange }) => {
+const MyInput = ({ placeholder, style, variant, onChange, error }) => {
 	const [color, setColor] = useState("inherit");
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -54,6 +54,7 @@ const MyInput = ({ placeholder, Icon, style, variant, onChange }) => {
 			onFocus={() => setColor("primary")}
 			onBlur={() => setColor("inherit")}
 			style={style}
+			error={error}
 			type={
 				variant !== "password"
 					? "text"
