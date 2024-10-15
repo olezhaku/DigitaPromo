@@ -8,6 +8,7 @@ import { createClient } from 'redis';
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios';
+import Passport from './db/models/pasport.js';
 
 const redisClient = createClient();
 await redisClient.connect(); 
@@ -67,38 +68,82 @@ fastify.post('/user', { preHandler: verifyToken }, async (req, reply) => {
 
 
 fastify.post('/register', async (req, reply) => {
-  const { username, password, name, surname, patronymic, date_of_birth, passportPhoto1Url, passportPhoto2Url } = req.body;
-  if (!username || !password || !name || !surname || !date_of_birth || !passportPhoto1Url || !passportPhoto2Url) 
-    return reply.status(400).send({ error: 'Все поля обязательны' });
-  if (!/^[A-Za-z0-9]{4,}$/.test(username)) 
-    return reply.status(400).send({ error: 'Логин должен содержать 4 символа' });
-  if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/.test(password)) 
-    return reply.status(400).send({ error: 'Пароль должен содержать минимум 7 символов, включая одну заглавную, строчную букву, цифру и специальный символ.' });
-  
+  const { 
+    username, password, name, surname, patronymic, date_of_birth, passportPhoto1Url, passportPhoto2Url, parentPhone, passportData, recruitLogin, city 
+  } = req.body;
+
+  const requiredFields = [username, password, name, surname, date_of_birth, passportPhoto1Url, passportPhoto2Url, passportData?.passportNumber, city];
+  if (requiredFields.some(field => !field)) return reply.status(400).send({ error: 'Все поля обязательны' });
+
+  const usernameRegex = /^[A-Za-z0-9]{4,}$/;
+  if (!usernameRegex.test(username)) return reply.status(400).send({ error: 'Логин должен содержать минимум 4 символа' });
+
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/;
+  if (!passwordRegex.test(password)) return reply.status(400).send({ error: 'Пароль должен содержать минимум 7 символов, включая заглавную букву, строчную букву, цифру и спецсимвол.' });
+
   const birthDate = new Date(date_of_birth);
-  if (isNaN(birthDate.getTime())) 
-    return reply.status(400).send({ error: 'Неверный формат даты рождения' });
-  if (!/^https?:\/\/[^\s$.?#].[^\s]*$/.test(passportPhoto1Url) || !/^https?:\/\/[^\s$.?#].[^\s]*$/.test(passportPhoto2Url)) 
-    return reply.status(400).send({ error: 'Некорректные ссылки на фото паспорта.' });
-  
-  if (await User.findOne({ where: { username } })) 
-    return reply.status(400).send({ error: 'Логин уже занят' });
+  if (isNaN(birthDate.getTime())) return reply.status(400).send({ error: 'Неверный формат даты рождения' });
+
+  const age = new Date().getFullYear() - birthDate.getFullYear();
+  const isMinor = age < 18 || (age === 18 && new Date() < new Date(birthDate.setFullYear(birthDate.getFullYear() + 1)));
+  if (isMinor && (!parentPhone || !/^(\+7\d{10}|8\d{10})$/.test(parentPhone))) return reply.status(400).send({ error: 'Номер телефона родителя обязателен для несовершеннолетних' });
+
+  const urlRegex = /^https?:\/\/[^\s$.?#].[^\s]*$/;
+  if (!urlRegex.test(passportPhoto1Url) || !urlRegex.test(passportPhoto2Url)) return reply.status(400).send({ error: 'Некорректные ссылки на фото паспорта.' });
+
+  if (await User.findOne({ where: { username } })) return reply.status(400).send({ error: 'Логин уже занят' });
+
+  const { passportNumber, issuedBy, issueDate, divisionCode, registrationAddress, residenceAddress, inn } = passportData;
+
+  const passportNumberRegex = /^\d{10}$/;
+  if (!passportNumberRegex.test(passportNumber)) return reply.status(400).send({ error: 'Серия и номер паспорта должны содержать 10 цифр.' });
+
+  const issuedByRegex = /^[А-Яа-я\s]+$/; 
+  if (!issuedByRegex.test(issuedBy)) return reply.status(400).send({ error: 'Поле "Кем выдан" должно содержать только буквы русского алфавита.' });
+
+  const issueDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  const parsedIssueDate = new Date(issueDate);
+  if (!issueDateRegex.test(issueDate) || isNaN(parsedIssueDate.getTime())) return reply.status(400).send({ error: 'Дата выдачи паспорта должна быть в формате ГГГГ-ММ-ДД' });
+
+  const divisionCodeRegex = /^\d{6}$/;
+  if (!divisionCodeRegex.test(divisionCode)) return reply.status(400).send({ error: 'Код подразделения должен содержать 6 цифр.' });
+
+  const addressRegex = /^[А-Яа-я\s\d,.-]+$/;
+  if (!addressRegex.test(registrationAddress)) return reply.status(400).send({ error: 'Адрес регистрации должен содержать только кириллицу, цифры и символы.' });
+  if (!addressRegex.test(residenceAddress)) return reply.status(400).send({ error: 'Адрес проживания должен содержать только кириллицу, цифры и символы.' });
+
+  const innRegex = /^\d{10}|\d{12}$/;
+  if (!innRegex.test(inn)) return reply.status(400).send({ error: 'ИНН должен содержать 10 или 12 цифр.' });
 
   try {
     const hashedPassword = await hashPassword(password);
-    await User.create({ username, password: hashedPassword, name, surname, patronymic, date_of_birth: birthDate, passportPhoto1Url, passportPhoto2Url });
-    
-    const user = await User.findOne({ where: { username } });
+    const user = await User.create({
+      username, password: hashedPassword, name, surname, patronymic, date_of_birth: birthDate, passportPhoto1Url, passportPhoto2Url, parent_phone: isMinor ? parentPhone : null, ref_login: recruitLogin, city
+    });
+
+    await Passport.create({
+      userId: user.id, passportNumber, issuedBy, issueDate, divisionCode, registrationAddress, residenceAddress, inn
+    });
+
     const token = uuidv4();
-    await redisClient.set(`token_reg_tg${user.id}`, token, { EX: 1800 });
-    
+    await redisClient.set(`token_reg_tg${user.id}`, token, { EX: 300 });
     const telegramLink = `https://t.me/gasagsagasg_bot?start=${user.id}_${token}`;
+
     return reply.send({ message: 'Регистрация успешна', telegramLink });
   } catch (error) {
     console.error('Ошибка при регистрации пользователя:', error);
     return reply.status(500).send({ error: 'Ошибка при регистрации' });
   }
 });
+
+
+
+fastify.post('/chek-username', async (req, reply) => {
+  const {username} = req.body;
+  if (await User.findOne({ where: { username } })) return reply.status(400).send({ error: 'Логин уже занят' });
+  return reply.send({ message: 'Логин доступен' }); 
+})
+
 
 
 fastify.post('/login', async (req, reply) => {
@@ -116,7 +161,7 @@ fastify.post('/login', async (req, reply) => {
 
     if (user.role === 0 || !user.telegram_id) {
       const token = uuidv4();
-      await redisClient.set(username, token);
+      await redisClient.set(`token_reg_tg${user.id}`, token);
       await redisClient.expire(username, 1800);
       return reply.send({ error: 'Аккаунт не подтверждён. Проверьте Telegram.', telegramLink: `https://t.me/gasagsagasg_bot?start=${user.id}_${token}` });
     }

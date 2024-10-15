@@ -36,6 +36,14 @@ const User = sequelize.define('User', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  telegram_username: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   ref_login: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -80,6 +88,10 @@ const User = sequelize.define('User', {
   passportPhoto2Url: { 
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  parent_phone: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 
