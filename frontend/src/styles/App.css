@@ -2,6 +2,7 @@
 	margin: 0;
 	padding: 0;
 	font-family: "Roboto";
+	transition: all 0.4s ease !important;
 }
 
 body {
@@ -13,5 +14,5 @@ body {
 }
 
 .light {
-	background: #bcbcbc;
+	background: #e0e0e0;
 }

@@ -1,42 +1,66 @@
 import React, { useState } from "react";
 
-import { InputAdornment } from "@mui/material";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import SearchIcon from "@mui/icons-material/Search";
+import { IconButton, OutlinedInput } from "@mui/material";
+
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import SearchIcon from "@mui/icons-material/SearchOutlined";
 
 import classes from "./MyInput.module.css";
 
-const MyInput = ({ placeholder, icon, style}) => {
-	// eslint-disable-next-line
-	const [value, setValue] = useState("");
+const MyInput = ({ placeholder, Icon, style, variant, onChange }) => {
 	const [color, setColor] = useState("inherit");
+	const [showPassword, setShowPassword] = useState(false);
 
-	const changeHandler = (event) => {
-		setValue(event.target.value);
+	const handleMouseDownPassword = (event) => {
+		event.preventDefault();
 	};
 
-	const handleFocus = () => {
-		setColor("primary");
+	const handleMouseUpPassword = (event) => {
+		event.preventDefault();
 	};
 
-	const handleBlur = () => {
-		setColor("inherit");
+	const iconFromInput = () => {
+		switch (variant) {
+			case "password":
+				return (
+					<IconButton
+						onClick={() => setShowPassword(!showPassword)}
+						onMouseDown={handleMouseDownPassword}
+						onMouseUp={handleMouseUpPassword}
+						edge="end"
+					>
+						{showPassword ? <Visibility /> : <VisibilityOff />}
+					</IconButton>
+				);
+
+			case "search":
+				return (
+					<IconButton edge="end">
+						<SearchIcon color={color} />
+					</IconButton>
+				);
+			default:
+				break;
+		}
 	};
 
-	// console.log(value);
-
-	//  <icon color={color} />
 	return (
 		<OutlinedInput
 			className={classes.input}
 			placeholder={placeholder}
-			endAdornment={
-				<InputAdornment position="end">{icon}</InputAdornment>
-			}
-			onChange={changeHandler}
-			onFocus={handleFocus}
-			onBlur={handleBlur}
+			endAdornment={iconFromInput()}
+			onChange={onChange}
+			onFocus={() => setColor("primary")}
+			onBlur={() => setColor("inherit")}
 			style={style}
+			type={
+				variant !== "password"
+					? "text"
+					: showPassword
+					? "text"
+					: "password"
+			}
 		/>
 	);
 };

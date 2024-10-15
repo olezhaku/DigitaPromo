@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 import Filters from "../../components/Filter/Filters";
-import Button from "../../components/UI/Button/MyButton";
-import Input from "../../components/UI/Input/MyInput";
+import MyButton from "../../components/UI/Button/MyButton";
+import MyInput from "../../components/UI/Input/MyInput";
 import MyTable from "../../components/UI/Table/MyTable";
 
 import { Box } from "@mui/material";
@@ -19,25 +19,33 @@ const Promoters = () => {
 		<Box className={classes.promoters}>
 			<Box className={classes.filter}>
 				<Box className={classes.buttons}>
-					<Button
+					<MyButton
 						value="Добавить"
-						icon={<AddIcon color="primary" />}
+						color="inherit"
+						textColor="primary"
+						variant="contained"
+						startIcon={<AddIcon color="primary" />}
 					/>
 
-					<Button
+					<MyButton
 						value="Экспорт"
-						icon={<FileDownloadOutlinedIcon color="primary" />}
+						color="inherit"
+						textColor="primary"
+						variant="contained"
+						startIcon={<FileDownloadOutlinedIcon color="primary" />}
 					/>
 				</Box>
 
 				<Box className={classes.inputs}>
 					<Box className={classes.input}>
-						<Input />
+						<MyInput variant="search" />
 					</Box>
 
 					<Box className={classes.button}>
-						<Button
+						<MyButton
 							isActive={isFilter}
+							color="inherit"
+							variant="contained"
 							icon={
 								<FilterListIcon
 									color={isFilter ? "inherit" : "primary"}

@@ -1,0 +1,101 @@
+@font-face {
+	font-family: Neuwelt-Black;
+	src: url(../../fonts/Neuwelt-Black.ttf);
+}
+
+.container,
+.left__side,
+.right__side {
+	width: 100%;
+	padding: 1.5em;
+	border-radius: 1.5em !important;
+	height: 100%;
+}
+.right__side,
+.content,
+.inputs {
+	display: flex;
+	flex-direction: column;
+}
+.row,
+.buttons {
+	display: flex;
+}
+.container,
+.settings {
+	display: flex;
+	align-items: center;
+}
+.body,
+.success {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+.right__side,
+.settings,
+.buttons {
+	justify-content: space-between;
+}
+.logo,
+.stepper > h4,
+.header,
+.image {
+	text-align: center;
+}
+.inputs,
+.row {
+	gap: 1em;
+}
+
+.container {
+	height: 100vh;
+	gap: 1.5em;
+}
+.left__side {
+	max-width: 360px;
+}
+
+.logo {
+	margin: 1.5em 0 2.75em 0;
+}
+.logo > h3 {
+	font-family: Neuwelt-Black !important;
+}
+.stepper > h4 {
+	font-weight: 500;
+	margin-bottom: 1.5rem;
+}
+
+.switcher {
+	text-align: end;
+}
+
+.content {
+	justify-content: space-around;
+	height: 100%;
+	padding: 3em 0;
+}
+
+.title {
+	font-weight: 500;
+}
+
+.field > p {
+	padding: 0.5em 0.75em;
+}
+
+.settings {
+	gap: 0.5em;
+}
+
+.buttons {
+	flex-direction: row-reverse;
+	margin-top: 1.5em;
+}
+
+.success {
+	justify-content: center;
+	height: 100%;
+	gap: 1.5em;
+}

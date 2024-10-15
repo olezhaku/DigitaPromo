@@ -1,54 +1,44 @@
-import React from "react";
-
-import { useDispatch, useSelector } from "react-redux";
-import { setActive } from "../../store/tabSlice";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { urlsMap } from "../../utils/urls";
 
 import { Button, IconButton, Typography } from "@mui/material";
 
 import classes from "./NavButton.module.css";
 
-const NavButton = ({ sectionItem, title, section, NavIcon, isWideScreen }) => {
-	const active = useSelector((state) => state.tab.active);
-	const dispatch = useDispatch();
+const NavButton = ({ sectionItem, NavIcon, isWideScreen }) => {
+	const location = useLocation();
+	const currentUrl = location.pathname.split("/")[2];
+	const activeTab = Object.entries(urlsMap).find(
+		([key, value]) => value === currentUrl
+	)?.[0];
+	const [isActive, setIsActive] = useState(activeTab);
 
-	const handleSectionClick = (title, section) => {
-		dispatch(setActive({ title, section }));
+	const handleSectionClick = (sectionItem) => {
+		setIsActive(sectionItem);
 	};
 
-	return (
-		<>
-			{isWideScreen ? (
-				<Button
-					className={classes.navbutton}
-					onClick={() => handleSectionClick(title, section)}
-					variant={
-						active.title === title && active.section === section
-							? "contained"
-							: "text"
-					}
-					color={
-						active.title === title && active.section === section
-							? "primary"
-							: "inherit"
-					}
-					startIcon={NavIcon && <NavIcon />}
-				>
-					<Typography>{sectionItem}</Typography>
-				</Button>
-			) : (
-				<IconButton
-					className={classes.iconbutton}
-					onClick={() => handleSectionClick(title, section)}
-					color={
-						active.title === title && active.section === section
-							? "primary"
-							: "inherit"
-					}
-				>
-					{NavIcon && <NavIcon />}
-				</IconButton>
-			)}
-		</>
+	// eslint-disable-next-line
+	useEffect(() => setIsActive(activeTab), [currentUrl]);
+
+	return isWideScreen ? (
+		<Button
+			className={classes.navbutton}
+			onClick={() => handleSectionClick(sectionItem)}
+			variant={sectionItem === isActive ? "contained" : "text"}
+			color={sectionItem === isActive ? "primary" : "inherit"}
+			startIcon={NavIcon && <NavIcon />}
+		>
+			<Typography>{sectionItem}</Typography>
+		</Button>
+	) : (
+		<IconButton
+			className={classes.iconbutton}
+			onClick={() => handleSectionClick(sectionItem)}
+			color={sectionItem === isActive ? "primary" : "inherit"}
+		>
+			{NavIcon && <NavIcon />}
+		</IconButton>
 	);
 };
 
